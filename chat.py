@@ -120,11 +120,21 @@ def chat(servidor, usuario1, usuario2,tu):
 
 def enviar(ventana,conversacion,historial,servidor,mensaje,usuario):
 	print "estoy en el metodo de enviar..."
+	print "estoy cifrando"
 	piCripter.crypt(mensaje,"mensaje_"+str(usuario),False)
+	print "termine de cifrar"
+	print "estoy abriendo el archivo"
 	archivo=open("mensaje_"+str(usuario)+".pi","rb")
+	print "ya abri el archivo"
+	print "lo estoy subiendo al servidor"
 	servidor.storbinary("STOR mensaje_"+str(usuario)+".pi",archivo)
-	archivo=open("STOR mensaje_"+str(usuario)+".ppk","rb")
+	print "archivo cifrado en el servidor"
+	print "abriendo clave"
+	archivo=open("mensaje_"+str(usuario)+".ppk","rb")
+	print "clave abierta"
+	print "estoy subiendo la clave"
 	servidor.storbinary("STOR mensaje_"+str(usuario)+".ppk",archivo)
+	print "clave en el servidor"
 	commands.getoutput("rm mensaje_"+str(usuario)+".pi")
 	commands.getoutput("rm mensaje_"+str(usuario)+".ppk")
 	print "sali del metodo de enviar, entrando al de recibir"
@@ -187,7 +197,7 @@ def main():
 	entryIP=Entry(login,textvar=varIP)
 	entryPass=Entry(login,textvar=varPass)
 	varUser.set("")
-	varIP.set("192.168.1.79")
+	varIP.set("187.205.105.91")
 	varPass.set("")
 	boton=Button(login,text="iniciar",command=lambda: connect(varIP.get(), varUser.get(), varPass.get(), login))
 	boton.pack()
