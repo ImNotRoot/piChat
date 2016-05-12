@@ -67,6 +67,7 @@ def ingresarUsuario(servidor,ventana,usuario,numUsuario):
 		archivo.close()
 		archivo=open(numUsuario,"rb")
 		servidor.storbinary("STOR "+numUsuario,archivo)
+		commands.getoutput("rm "+numUsuario)
 		archivo.close()
 		ventana.destroy()
 		usuarios=servidor.nlst()
@@ -82,6 +83,7 @@ def ingresarUsuario(servidor,ventana,usuario,numUsuario):
 		servidor.retrbinary("RETR usuario_1" ,open("usuario_1", 'wb').write)
 		usuario1=open("usuario_1","r")
 		usuario1=usuario1.read()
+		commands.getoutput("usuario_1")
 		if usuario1==usuario2:
 			ventanaerror(ventana,"Ese nombre de usuario ya lo tiene el usuario 1","Elige otro nombre de usuario")
 		else:
@@ -95,7 +97,7 @@ def ingresarUsuario(servidor,ventana,usuario,numUsuario):
 			servidor.storbinary("STOR "+numUsuario,archivo)
 			archivo.close()
 			ventana.destroy()
-			commands.getoutput("rm usuario_1")
+			commands.getoutput("rm usuario_2")
 			chat(servidor,usuario1,usuario2,2)
 	
 def chat(servidor, usuario1, usuario2,tu):
@@ -110,7 +112,7 @@ def chat(servidor, usuario1, usuario2,tu):
 	varEntrada=StringVar()
 	conversacion=Label(ventana,text=varConversacion.get())
 	entrada=Entry(ventana,textvar=varEntrada)
-	boton=Button(ventana,text="Enviar",command=lambda:varConversacion.get(enviar(ventana,conversacion,varConversacion.get(),servidor,varEntrada.get(),tu)))
+	boton=Button(ventana,text="Enviar",command=lambda:varConversacion.set(enviar(ventana,conversacion,varConversacion.get(),servidor,varEntrada.get(),tu)))
 	boton.pack(side=BOTTOM)
 	entrada.pack(side=BOTTOM)
 	conversacion.pack(side=TOP)
@@ -156,12 +158,17 @@ def recibir(servidor,ventana,usuario,conversacion,mensaje):
 	servidor.retrbinary('RETR '+cifrado,open(cifrado, 'wb').write)
 	servidor.retrbinary('RETR '+clave,open(clave, 'wb').write)
 	piCripter.decrypt(cifrado,clave,False)
-	texto=open("mensaje_"+str(usuario)+".txt",r)
+	texto=open("mensaje_"+str(usuario)+".txt","r")
 	texto=texto.read()
 	mensaje=mensaje+"\n"+texto
 	conversacion.destroy()
 	conversacion=Label(ventana,text=mensaje)
 	conversacion.pack(side=TOP)
+	commands.getoutput("rm "+clave)
+	commands.getoutput("rm "+cifrado)
+	commands.getoutput("rm mensaje_"+str(usuario)+".txt")
+	servidor.delete(cifrado)
+	servidor.delete(clave)
 	print "sali del metodo de recibir"
 	return mensaje
 
@@ -204,6 +211,3 @@ def main():
 	return 0
 if __name__ == '__main__':
 	 main()
-
-
-
