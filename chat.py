@@ -7,6 +7,8 @@ import time
 import commands
 import piCripter
 
+turno = True
+
 def ventanaerror(ventana,mensaje,titulo):
 	error=Toplevel(ventana)
 	error.geometry("300x80")
@@ -17,9 +19,9 @@ def ventanaerror(ventana,mensaje,titulo):
 	boton.pack()
 
 def validacion(servidor,ventana):
-	servidor.delete("usuario_2")
 	archivos=servidor.nlst()
 	if "usuario_1" not in archivos:
+		print 1
 		ventana.destroy()
 		archivo=open("usuario_1","wr")
 		archivo=open("usuario_1","rb")
@@ -35,6 +37,7 @@ def validacion(servidor,ventana):
 		boton=Button(inputname,text="ingresar",command=lambda:ingresarUsuario(servidor,inputname,user.get(),1))
 		boton.pack()
 	elif "usuario_2" not in archivos:
+		print 2
 		ventana.destroy()
 		archivo=open("usuario_2","wr")
 		archivo=open("usuario_2","rb")
@@ -72,13 +75,13 @@ def ingresarUsuario(servidor,ventana,usuario,numUsuario):
 			usuarios=servidor.nlst()
 		servidor.retrbinary("RETR usuario_2" ,open("usuario_2", 'wb').write)
 		usuario2=open("usuario_2","r")
-		usuario2=usuario.read()
+		usuario2=usuario2.read()
 		commands.getoutput("rm usuario_1")
 		chat(servidor,usuario1,usuario2,1)
 	else:
 		servidor.retrbinary("RETR usuario_1" ,open("usuario_1", 'wb').write)
 		usuario1=open("usuario_1","r")
-		usaurio1=usuario.read()
+		usuario1=usuario1.read()
 		if usuario1==usuario2:
 			ventanaerror(ventana,"Ese nombre de usuario ya lo tiene el usuario 1","Elige otro nombre de usuario")
 		else:
@@ -113,8 +116,10 @@ def chat(servidor, usuario1, usuario2,tu):
 	conversacion.pack(side=TOP)
 	if turno == False:
 		recibir(servidor,ventana,tu,conversacion,varConversacion.get())
+		turno = True
 
 def enviar(ventana,conversacion,historial,servidor,mensaje,usuario):
+	print "estoy en el metodo de enviar..."
 	piCripter.crypt(mensaje,"mensaje_"+str(usuario),False)
 	archivo=open("mensaje_"+str(usuario)+".pi","rb")
 	servidor.storbinary("STOR mensaje_"+str(usuario)+".pi",archivo)
@@ -122,18 +127,22 @@ def enviar(ventana,conversacion,historial,servidor,mensaje,usuario):
 	servidor.storbinary("STOR mensaje_"+str(usuario)+".ppk",archivo)
 	commands.getoutput("rm mensaje_"+str(usuario)+".pi")
 	commands.getoutput("rm mensaje_"+str(usuario)+".ppk")
+	print "sali del metodo de enviar, entrando al de recibir"
 	return recibir(servidor,ventana,usuario,conversacion,historial)
 
 def recibir(servidor,ventana,usuario,conversacion,mensaje):
+	print "entre al metodo de recibir"
 	if(usuario==1):
 		usuario=2
 	else:
 		usuario=1
-	cifrado="mensaje_"+str(usuario)+."pi"
-	clave="mensaje_"+str(usuario)+."ppk"
+	cifrado="mensaje_"+str(usuario)+".pi"
+	clave="mensaje_"+str(usuario)+".ppk"
 	usuarios=servidor.nlst()
-	while (cifrado not in usuarios)&&(clave not in usuarios):
+	while (cifrado not in usuarios)&(clave not in usuarios):
+			print "Estoy dentro del while..."
 			usuarios=servidor.nlst()
+	print "sali del while"
 	servidor.retrbinary(cifrado,open(cifrado, 'wb').write)
 	textoCifrado=open(cifrado,"r")
 	textoCifrado=textoCifrado.read()
@@ -141,12 +150,13 @@ def recibir(servidor,ventana,usuario,conversacion,mensaje):
 	textoClave=open(clave,"r")
 	textoClave=textoClave.read()
 	piCripter.decrypt(cifrado,clave,False)
-	texto=open("mensaje_"+str(usuario)+."txt",r)
+	texto=open("mensaje_"+str(usuario)+".txt",r)
 	texto=texto.read()
 	mensaje=mensaje+"\n"+texto
 	conversacion.destroy()
 	conversacion=Label(ventana,text=mensaje)
 	conversacion.pack(side=TOP)
+	print "sali del metodo de recibir"
 	return mensaje
 
 def connect(ip,usuario,contrasena,ventana):
