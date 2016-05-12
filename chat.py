@@ -107,10 +107,12 @@ def chat(servidor, usuario1, usuario2,tu):
 	varEntrada=StringVar()
 	conversacion=Label(ventana,text=varConversacion.get())
 	entrada=Entry(ventana,textvar=varEntrada)
-	boton=Button(ventana,text="Enviar",command=lambda:enviar(ventana,conversacion,varConversacion.get(),servidor,varEntrada.get(),tu))
+	boton=Button(ventana,text="Enviar",command=lambda:varConversacion.get(enviar(ventana,conversacion,varConversacion.get(),servidor,varEntrada.get(),tu)))
 	boton.pack(side=BOTTOM)
 	entrada.pack(side=BOTTOM)
 	conversacion.pack(side=TOP)
+	if turno == False:
+		recibir(servidor,ventana,tu,conversacion,varConversacion.get())
 
 def enviar(ventana,conversacion,historial,servidor,mensaje,usuario):
 	piCripter.crypt(mensaje,"mensaje_"+str(usuario),False)
@@ -120,7 +122,7 @@ def enviar(ventana,conversacion,historial,servidor,mensaje,usuario):
 	servidor.storbinary("STOR mensaje_"+str(usuario)+".ppk",archivo)
 	commands.getoutput("rm mensaje_"+str(usuario)+".pi")
 	commands.getoutput("rm mensaje_"+str(usuario)+".ppk")
-	recibir(servidor,ventana,usuario,conversacion,historial)
+	return recibir(servidor,ventana,usuario,conversacion,historial)
 
 def recibir(servidor,ventana,usuario,conversacion,mensaje):
 	if(usuario==1):
@@ -145,6 +147,7 @@ def recibir(servidor,ventana,usuario,conversacion,mensaje):
 	conversacion.destroy()
 	conversacion=Label(ventana,text=mensaje)
 	conversacion.pack(side=TOP)
+	return mensaje
 
 def connect(ip,usuario,contrasena,ventana):
 	ftp=FTP()
