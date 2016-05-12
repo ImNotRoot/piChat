@@ -153,12 +153,8 @@ def recibir(servidor,ventana,usuario,conversacion,mensaje):
 			print "Estoy dentro del while..."
 			usuarios=servidor.nlst()
 	print "sali del while"
-	servidor.retrbinary(cifrado,open(cifrado, 'wb').write)
-	textoCifrado=open(cifrado,"r")
-	textoCifrado=textoCifrado.read()
-	servidor.retrbinary(clave,open(clave, 'wb').write)
-	textoClave=open(clave,"r")
-	textoClave=textoClave.read()
+	servidor.retrbinary('RETR '+cifrado,open(cifrado, 'wb').write)
+	servidor.retrbinary('RETR '+clave,open(clave, 'wb').write)
 	piCripter.decrypt(cifrado,clave,False)
 	texto=open("mensaje_"+str(usuario)+".txt",r)
 	texto=texto.read()
