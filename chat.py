@@ -124,7 +124,9 @@ def chat(servidor, usuario1, usuario2,tu):
 def enviar(ventana,conversacion,historial,servidor,mensaje,usuario):
 	print "estoy en el metodo de enviar..."
 	print "estoy cifrando"
-	piCripter.crypt(mensaje,"mensaje_"+str(usuario),False)
+	comando="./piCripter.py -c '"+mensaje+"' "+"mensaje_"+str(usuario)
+	print comando
+	commands.getoutput(comando)
 	print "termine de cifrar"
 	print "estoy abriendo el archivo"
 	archivo=open("mensaje_"+str(usuario)+".pi","rb")
@@ -141,7 +143,6 @@ def enviar(ventana,conversacion,historial,servidor,mensaje,usuario):
 	commands.getoutput("rm mensaje_"+str(usuario)+".pi")
 	commands.getoutput("rm mensaje_"+str(usuario)+".ppk")
 	print "sali del metodo de enviar, entrando al de recibir"
-	raw_input("revisa la carpeta a ver si se eliminaron ambos, el mensaje y la clave")
 	return recibir(servidor,ventana,usuario,conversacion,historial)
 
 def recibir(servidor,ventana,usuario,conversacion,mensaje):
@@ -168,7 +169,10 @@ def recibir(servidor,ventana,usuario,conversacion,mensaje):
 	servidor.retrbinary('RETR '+clave,open(clave, 'wb').write)
 	print "descargue clave"
 	print "desencriptando texto"
-	piCripter.decrypt(cifrado,clave,False)
+	#piCripter.decrypt(cifrado,clave,False)
+	comando="./piCripter.py -d "+cifrado+" "+clave
+	print comando
+	commands.getoutput(comando)
 	print "texto desencriptado"
 	print "abriendo mensaje"
 	texto=open("mensaje_"+str(usuario)+".txt","r")
@@ -190,7 +194,6 @@ def recibir(servidor,ventana,usuario,conversacion,mensaje):
 	print servidor.delete(clave)
 	print "residuos eliminados"
 	print "sali del metodo de recibir"
-	raw_input("revisa la carpeta y el servidor y revisa si se elimino el mensaje, la clave y el mensaje descifrado")
 	return mensaje
 
 def connect(ip,usuario,contrasena,ventana):
