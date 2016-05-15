@@ -87,23 +87,25 @@ def ingresarUsuario(servidor,ventana,usuario,numUsuario):
 		usuario1=open("usuario_1","r")
 		usuario1=usuario1.read()
 		commands.getoutput("rm usuario_1")
-		if usuario1==usuario2:
-			ventanaerror(ventana,"Ese nombre de usuario ya lo tiene el usuario 1","Elige otro nombre de usuario")
-		else:
-			usuario2=usuario
-			numUsuario="usuario_"+str(numUsuario)
-			servidor.delete(numUsuario)
-			archivo=open(numUsuario,"wr")
-			archivo.write(usuario)
-			archivo.close()
-			archivo=open(numUsuario,"rb")
-			servidor.storbinary("STOR "+numUsuario,archivo)
-			archivo.close()
-			ventana.destroy()
-			commands.getoutput("rm "+numUsuario)
-			print "usuario 1 - "+usuario1
-			print "usuario 2 - "+usuario2
-			chat(servidor,usuario1,usuario2,2)
+		while usuario=="":
+			servidor.retrbinary("RETR usuario_1" ,open("usuario_1", 'wb').write)
+			usuario1=open("usuario_1","r")
+			usuario1=usuario1.read()
+			commands.getoutput("rm usuario_1")
+		usuario2=usuario
+		numUsuario="usuario_"+str(numUsuario)
+		servidor.delete(numUsuario)
+		archivo=open(numUsuario,"wr")
+		archivo.write(usuario)
+		archivo.close()
+		archivo=open(numUsuario,"rb")
+		servidor.storbinary("STOR "+numUsuario,archivo)
+		archivo.close()
+		ventana.destroy()
+		commands.getoutput("rm "+numUsuario)
+		print "usuario 1 - "+usuario1
+		print "usuario 2 - "+usuario2
+		chat(servidor,usuario1,usuario2,2)
 	
 def chat(servidor, usuario1, usuario2,tu):
 	if tu == 1:
@@ -122,7 +124,7 @@ def chat(servidor, usuario1, usuario2,tu):
 	entrada.pack(side=BOTTOM)
 	conversacion.pack(side=TOP)
 	if turno == False:
-		recibir(servidor,ventana,tu,conversacion,varConversacion.get())
+		recibir(servidor,ventana,tu,varConversacion.get())
 		turno = True
 
 def enviar(ventana,historial,servidor,mensaje,usuario):
