@@ -79,6 +79,8 @@ def ingresarUsuario(servidor,ventana,usuario,numUsuario):
 		usuario2=open("usuario_2","r")
 		usuario2=usuario2.read()
 		commands.getoutput("rm usuario_2")
+		print "usuario 1 - "+usuario1
+		print "usuario 2 - "+usuario2
 		chat(servidor,usuario1,usuario2,1)
 	else:
 		servidor.retrbinary("RETR usuario_1" ,open("usuario_1", 'wb').write)
@@ -99,6 +101,8 @@ def ingresarUsuario(servidor,ventana,usuario,numUsuario):
 			archivo.close()
 			ventana.destroy()
 			commands.getoutput("rm "+numUsuario)
+			print "usuario 1 - "+usuario1
+			print "usuario 2 - "+usuario2
 			chat(servidor,usuario1,usuario2,2)
 	
 def chat(servidor, usuario1, usuario2,tu):
@@ -113,7 +117,7 @@ def chat(servidor, usuario1, usuario2,tu):
 	varEntrada=StringVar()
 	conversacion=Label(ventana,text=varConversacion.get())
 	entrada=Entry(ventana,textvar=varEntrada)
-	boton=Button(ventana,text="Enviar",command=lambda:varConversacion.set(enviar(ventana,conversacion,varConversacion.get(),servidor,varEntrada.get(),tu)))
+	boton=Button(ventana,text="Enviar",command=lambda:varConversacion.set(enviar(ventana,varConversacion.get(),servidor,varEntrada.get(),tu)))
 	boton.pack(side=BOTTOM)
 	entrada.pack(side=BOTTOM)
 	conversacion.pack(side=TOP)
@@ -121,7 +125,7 @@ def chat(servidor, usuario1, usuario2,tu):
 		recibir(servidor,ventana,tu,conversacion,varConversacion.get())
 		turno = True
 
-def enviar(ventana,conversacion,historial,servidor,mensaje,usuario):
+def enviar(ventana,historial,servidor,mensaje,usuario):
 	print "estoy en el metodo de enviar..."
 	print "estoy cifrando"
 	comando="./piCripter.py -c '"+mensaje+"' "+"mensaje_"+str(usuario)
@@ -143,9 +147,9 @@ def enviar(ventana,conversacion,historial,servidor,mensaje,usuario):
 	commands.getoutput("rm mensaje_"+str(usuario)+".pi")
 	commands.getoutput("rm mensaje_"+str(usuario)+".ppk")
 	print "sali del metodo de enviar, entrando al de recibir"
-	return recibir(servidor,ventana,usuario,conversacion,historial)
+	return recibir(servidor,ventana,usuario,historial)
 
-def recibir(servidor,ventana,usuario,conversacion,mensaje):
+def recibir(servidor,ventana,usuario,mensaje):
 	print "entre al metodo de recibir"
 	if(usuario==1):
 		usuario=2
@@ -169,7 +173,6 @@ def recibir(servidor,ventana,usuario,conversacion,mensaje):
 	servidor.retrbinary('RETR '+clave,open(clave, 'wb').write)
 	print "descargue clave"
 	print "desencriptando texto"
-	#piCripter.decrypt(cifrado,clave,False)
 	comando="./piCripter.py -d "+cifrado+" "+clave
 	print comando
 	commands.getoutput(comando)
@@ -180,10 +183,8 @@ def recibir(servidor,ventana,usuario,conversacion,mensaje):
 	print "leyendo mensaje"
 	texto=texto.read()
 	print "mensaje leido"
-	mensaje=mensaje+"\n"+texto
-	conversacion.destroy()
 	print "generando nueva label"
-	conversacion=Label(ventana,text=mensaje)
+	conversacion=Label(ventana,text=texto)
 	conversacion.pack(side=TOP)
 	print "nueva label generada"
 	print "eliminado residuos"
