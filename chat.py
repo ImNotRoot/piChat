@@ -79,6 +79,12 @@ def ingresarUsuario(servidor,ventana,usuario,numUsuario):
 		usuario2=open("usuario_2","r")
 		usuario2=usuario2.read()
 		commands.getoutput("rm usuario_2")
+		while usuario=="":
+			time.sleep(2)
+			servidor.retrbinary("RETR usuario_2" ,open("usuario_2", 'wb').write)
+			usuario2=open("usuario_2","r")
+			usuario2=usuario2.read()
+			commands.getoutput("rm usuario_2")
 		print "usuario 1 - "+usuario1
 		print "usuario 2 - "+usuario2
 		chat(servidor,usuario1,usuario2,1)
@@ -87,11 +93,6 @@ def ingresarUsuario(servidor,ventana,usuario,numUsuario):
 		usuario1=open("usuario_1","r")
 		usuario1=usuario1.read()
 		commands.getoutput("rm usuario_1")
-		while usuario=="":
-			servidor.retrbinary("RETR usuario_1" ,open("usuario_1", 'wb').write)
-			usuario1=open("usuario_1","r")
-			usuario1=usuario1.read()
-			commands.getoutput("rm usuario_1")
 		usuario2=usuario
 		numUsuario="usuario_"+str(numUsuario)
 		servidor.delete(numUsuario)
