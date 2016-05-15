@@ -149,10 +149,10 @@ def enviar(ventana,servidor,mensaje,usuario,nombres):
 	print "clave en el servidor"
 	commands.getoutput("rm mensaje_"+str(usuario)+".pi")
 	commands.getoutput("rm mensaje_"+str(usuario)+".ppk")
-	l1=Label(ventana,text=nombres[usuario]+" - "+mensaje)
+	l1=Label(ventana,text=nombres[usuario-1]+" - "+mensaje)
 	l1.pack(side=TOP)
 	print "sali del metodo de enviar, entrando al de recibir"
-	return recibir(servidor,ventana,usuario)
+	return recibir(servidor,ventana,usuario,nombres)
 
 def recibir(servidor,ventana,usuario,nombres):
 	print "entre al metodo de recibir"
@@ -199,7 +199,7 @@ def recibir(servidor,ventana,usuario,nombres):
 	else:
 		usuario=1
 	print "generando nueva label"
-	conversacion=Label(ventana,text=nombres[usuario]+" - "texto)
+	conversacion=Label(ventana,text=nombres[usuario-1]+" - "+texto)
 	conversacion.pack(side=TOP)
 	print "nueva label generada"
 	print "residuos eliminados"
