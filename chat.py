@@ -78,13 +78,13 @@ def ingresarUsuario(servidor,ventana,usuario,numUsuario):
 		servidor.retrbinary("RETR usuario_2" ,open("usuario_2", 'wb').write)
 		usuario2=open("usuario_2","r")
 		usuario2=usuario2.read()
-		commands.getoutput("rm usuario_1")
+		commands.getoutput("rm usuario_2")
 		chat(servidor,usuario1,usuario2,1)
 	else:
 		servidor.retrbinary("RETR usuario_1" ,open("usuario_1", 'wb').write)
 		usuario1=open("usuario_1","r")
 		usuario1=usuario1.read()
-		commands.getoutput("usuario_1")
+		commands.getoutput("rm usuario_1")
 		if usuario1==usuario2:
 			ventanaerror(ventana,"Ese nombre de usuario ya lo tiene el usuario 1","Elige otro nombre de usuario")
 		else:
@@ -98,7 +98,7 @@ def ingresarUsuario(servidor,ventana,usuario,numUsuario):
 			servidor.storbinary("STOR "+numUsuario,archivo)
 			archivo.close()
 			ventana.destroy()
-			commands.getoutput("rm usuario_2")
+			commands.getoutput("rm "+numUsuario)
 			chat(servidor,usuario1,usuario2,2)
 	
 def chat(servidor, usuario1, usuario2,tu):
