@@ -54,6 +54,8 @@ def validacion(servidor,ventana):
 		boton.pack()
 	else:
 		ventanaerror(ventana,"Ya existen 2 usuarios en este chat","Chat completo")
+		servidor.delete("usuario_1")
+		servidor.delete("usuario_2")
 	
 def ingresarUsuario(servidor,ventana,usuario,numUsuario):
 	usuario1=""
@@ -131,6 +133,8 @@ def chat(servidor, usuario1, usuario2,tu):
 def enviar(ventana,servidor,mensaje,usuario,nombres):
 	print "estoy en el metodo de enviar..."
 	print "estoy cifrando"
+	l1=Label(ventana,text=nombres[usuario-1]+" - "+mensaje)
+	l1.pack(side=TOP)
 	comando="./piCripter.py -c '"+mensaje+"' "+"mensaje_"+str(usuario)
 	print comando
 	commands.getoutput(comando)
@@ -148,11 +152,9 @@ def enviar(ventana,servidor,mensaje,usuario,nombres):
 	servidor.storbinary("STOR mensaje_"+str(usuario)+".ppk",archivo)
 	print "clave en el servidor"
 	commands.getoutput("rm mensaje_"+str(usuario)+".pi")
-	commands.getoutput("rm mensaje_"+str(usuario)+".ppk")
-	l1=Label(ventana,text=nombres[usuario-1]+" - "+mensaje)
-	l1.pack(side=TOP)
+	commands.getoutput("rm mensaje_"+str(usuario)+".ppk")	
 	print "sali del metodo de enviar, entrando al de recibir"
-	return recibir(servidor,ventana,usuario,nombres)
+	recibir(servidor,ventana,usuario,nombres)
 
 def recibir(servidor,ventana,usuario,nombres):
 	print "entre al metodo de recibir"
@@ -204,7 +206,6 @@ def recibir(servidor,ventana,usuario,nombres):
 	print "nueva label generada"
 	print "residuos eliminados"
 	print "sali del metodo de recibir"
-	return mensaje
 
 def connect(ip,usuario,contrasena,ventana):
 	ftp=FTP()
