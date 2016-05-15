@@ -74,6 +74,7 @@ def ingresarUsuario(servidor,ventana,usuario,numUsuario):
 		print "Esperando un 2do usuario"
 		while "usuario_2" not in usuarios:
 			usuarios=servidor.nlst()
+			time.sleep(2)
 		servidor.retrbinary("RETR usuario_2" ,open("usuario_2", 'wb').write)
 		usuario2=open("usuario_2","r")
 		usuario2=usuario2.read()
@@ -140,6 +141,7 @@ def enviar(ventana,conversacion,historial,servidor,mensaje,usuario):
 	commands.getoutput("rm mensaje_"+str(usuario)+".pi")
 	commands.getoutput("rm mensaje_"+str(usuario)+".ppk")
 	print "sali del metodo de enviar, entrando al de recibir"
+	raw_input("revisa la carpeta a ver si se eliminaron ambos, el mensaje y la clave")
 	return recibir(servidor,ventana,usuario,conversacion,historial)
 
 def recibir(servidor,ventana,usuario,conversacion,mensaje):
@@ -151,25 +153,44 @@ def recibir(servidor,ventana,usuario,conversacion,mensaje):
 	cifrado="mensaje_"+str(usuario)+".pi"
 	clave="mensaje_"+str(usuario)+".ppk"
 	usuarios=servidor.nlst()
+	print cifrado
+	print clave
 	while (cifrado not in usuarios)&(clave not in usuarios):
 			print "Estoy dentro del while..."
+			print usuarios
 			usuarios=servidor.nlst()
+			time.sleep(2)
 	print "sali del while"
+	print "descargando archivo cifrado"
 	servidor.retrbinary('RETR '+cifrado,open(cifrado, 'wb').write)
+	print "descargue el archivo cifrado"
+	print "descargando clave"
 	servidor.retrbinary('RETR '+clave,open(clave, 'wb').write)
+	print "descargue clave"
+	print "desencriptando texto"
 	piCripter.decrypt(cifrado,clave,False)
+	print "texto desencriptado"
+	print "abriendo mensaje"
 	texto=open("mensaje_"+str(usuario)+".txt","r")
+	print "mensaje abierto"
+	print "leyendo mensaje"
 	texto=texto.read()
+	print "mensaje leido"
 	mensaje=mensaje+"\n"+texto
 	conversacion.destroy()
+	print "generando nueva label"
 	conversacion=Label(ventana,text=mensaje)
 	conversacion.pack(side=TOP)
-	commands.getoutput("rm "+clave)
-	commands.getoutput("rm "+cifrado)
-	commands.getoutput("rm mensaje_"+str(usuario)+".txt")
-	servidor.delete(cifrado)
-	servidor.delete(clave)
+	print "nueva label generada"
+	print "eliminado residuos"
+	print commands.getoutput("rm "+clave)
+	print commands.getoutput("rm "+cifrado)
+	print commands.getoutput("rm mensaje_"+str(usuario)+".txt")
+	print servidor.delete(cifrado)
+	print servidor.delete(clave)
+	print "residuos eliminados"
 	print "sali del metodo de recibir"
+	raw_input("revisa la carpeta y el servidor y revisa si se elimino el mensaje, la clave y el mensaje descifrado")
 	return mensaje
 
 def connect(ip,usuario,contrasena,ventana):
